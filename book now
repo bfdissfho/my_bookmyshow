@@ -1,0 +1,175 @@
+// ==UserScript==
+// @name         bookmyshow book now
+// @namespace    http://tampermonkey.net/
+// @version      2024-10-19
+// @description  try to take over the world!
+// @author       You
+// @match        https://ime.bigtix.io/booking/*
+// @match        https://ime.bigtix.io/events/*
+// @match        https://ime.bigtix.io/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=bigtix.io
+// @grant        none
+// ==/UserScript==
+
+(function() {
+
+    const want_section = ['321','320','323']
+
+    function clickBookNowButton() {
+        const bookButton = document.getElementById("bmsportal-book");
+        if (bookButton) {
+            bookButton.click()
+            console.log("Clicked the 'BOOK NOW' button.");
+        } else {
+            console.log("'BOOK NOW' button not found.");
+        }
+    }
+
+    function scrollToElement() {
+        const element = document.querySelector("body > div:nth-child(170) > div > div.rc-dialog-wrap > div > div.rc-dialog-content > div.rc-dialog-body > div.ClickToAccept__StyledContent-sc-1bm3gjz-3.gJmPMw > div")
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }
+
+    function clickAcceptButton() {
+        const button = document.querySelector("button.sc-AxhUy.fCeRMj.bigtix-button.bigtix-button--primary.ClickToAccept__StyledButton-sc-1bm3gjz-2.jUICtK");
+        if (button) {
+            button.click();
+        }
+    }
+
+    function clickRandomdate() {
+        const buttons = document.querySelectorAll("button.bigtix-session");
+        if (buttons.length > 0) {
+            const randomIndex = Math.floor(Math.random() * buttons.length);
+            buttons[randomIndex].click();
+        }
+    }
+
+    function clickquan() {
+        const svgElements = document.querySelectorAll("svg.bigtix-button__icon--prefix.bigtix-button__icon--spin._1xa4e236");
+        const button = document.querySelector("button.bigtix-button--primary.bigtix-booking-pagenav-next");
+        if (svgElements.length > 1) {
+            const secondSvgElement = svgElements[1]; // Select the second one
+
+            const clickEvent = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            secondSvgElement.dispatchEvent(clickEvent);
+            secondSvgElement.dispatchEvent(clickEvent);
+            secondSvgElement.dispatchEvent(clickEvent);
+            secondSvgElement.dispatchEvent(clickEvent);
+            secondSvgElement.dispatchEvent(clickEvent);
+            secondSvgElement.dispatchEvent(clickEvent);
+            secondSvgElement.dispatchEvent(clickEvent);
+            secondSvgElement.dispatchEvent(clickEvent);
+            secondSvgElement.dispatchEvent(clickEvent);
+            secondSvgElement.dispatchEvent(clickEvent);
+            button.click();
+            console.log("Clicked the second SVG element.");
+        } else {
+            console.log("Second SVG element not found.");
+        }
+    }
+
+
+
+    function simulateMouseEvents(element) {
+        const eventOptions = { view: window, bubbles: true, cancelable: true };
+
+        // Create and dispatch mousedown event
+        const mouseDownEvent = new MouseEvent('mousedown', eventOptions);
+        element.dispatchEvent(mouseDownEvent);
+
+        // Create and dispatch mouseup event
+        const mouseUpEvent = new MouseEvent('mouseup', eventOptions);
+        element.dispatchEvent(mouseUpEvent);
+
+        // Create and dispatch click event
+        const clickEvent = new MouseEvent('click', eventOptions);
+        element.dispatchEvent(clickEvent);
+
+        console.log("Simulated mouse events on the section.");
+    }
+
+
+    function clickSection(sectionName) {
+        const section = document.querySelector(`polygon[data-section-name='${sectionName}']`);
+
+
+        if (section) {
+            simulateMouseEvents(section); // Simulate mouse events on the section
+
+            setTimeout(() => {
+                const confirmButton = document.getElementById("bigtix-booking-next-page"); // Use ID to select the button
+                console.log(confirmButton);
+                if (confirmButton) {
+                    confirmButton.click(); // Click the confirm button
+                    console.log("Clicked the confirm button.");
+                    setTimeout(clickBackButton, 5000)
+                } else {
+                    console.log("Confirm button not found.");
+                }
+            }, 1000); // Adjust timeout as necessary
+        } else {
+            console.log("Section not found.");
+        }
+    }
+
+    function clickBackButton() {
+        const backButton = document.querySelector("button.bigtix-booking-message-return");
+
+        if (backButton) {
+            // Create and dispatch a click event
+            const clickEvent = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            backButton.dispatchEvent(clickEvent);
+            console.log("Clicked the 'Back' button.");
+        } else {
+            console.log("'Back' button not found.");
+        }
+    }
+
+    function processSections() {
+        let sectionIndex = 0;
+
+        const intervalId = setInterval(() => {
+            const confirmButton = document.getElementById("bigtix-booking-next-page");
+
+            if (confirmButton) {
+                clearInterval(intervalId); // Stop checking if confirm button is found
+
+                // Start clicking sections
+                want_section.forEach((sectionName, index) => {
+                    setTimeout(() => {
+                        clickSection(sectionName);
+                    }, index * 8000); // Adjust timing as needed (e.g., 8000 ms between each click)
+                });
+            } else {
+                console.log("Confirm button not found. Checking again...");
+            }
+        }, 5000); // Check for the confirm button every 2 seconds
+    }
+
+
+
+
+    function runActions() {
+        for (let i = 0; i < 2; i++) { // Run actions twice
+            setTimeout(() => clickBookNowButton(), 3000 + (i * 15000)); // 3000, 18000
+            setTimeout(() => scrollToElement(), 6000 + (i * 15000)); // 6000, 21000
+            setTimeout(() => clickAcceptButton(), 8000 + (i * 15000)); // 8000, 24000
+            setTimeout(() => clickRandomdate(), 11000 + (i * 15000)); // 11000, 27000
+            setTimeout(() => clickquan(), 13000 + (i * 15000)); // 13000, 30000
+        }
+    }
+
+    runActions()
+    processSections()
+})();
