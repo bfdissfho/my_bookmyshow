@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         bookmyshow book now
 // @namespace    http://tampermonkey.net/
-// @version      2024-10-19
+// @version      2025-3-12
 // @description  try to take over the world!
 // @author       You
-// @match        https://ime.bigtix.io/booking/*
-// @match        https://ime.bigtix.io/events/*
 // @match        https://ime.bigtix.io/*
+// @match        https://starplanet.bigtix.io/*
+// @match        https://my.bookmyshow.com/*
+// @match        https://biztmgptix.bigtix.io/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=bigtix.io
 // @updateURL    https://raw.githubusercontent.com/bfdissfho/my_bookmyshow/refs/heads/main/book%20now
 // @downloadURL  https://raw.githubusercontent.com/bfdissfho/my_bookmyshow/refs/heads/main/book%20now
@@ -15,7 +16,7 @@
 
 (function() {
 
-    const want_section = ['321','320','323']
+    const want_section = ['VIP','320','323']
 
     function clickBookNowButton() {
         const bookButton = document.getElementById("bmsportal-book");
@@ -28,14 +29,17 @@
     }
 
     function scrollToElement() {
-        const element = document.querySelector("body > div:nth-child(170) > div > div.rc-dialog-wrap > div > div.rc-dialog-content > div.rc-dialog-body > div.ClickToAccept__StyledContent-sc-1bm3gjz-3.gJmPMw > div")
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        const scrollableContent = document.querySelector('.ClickToAccept__StyledContent-sc-1bm3gjz-3.iZxUpj');
+
+        if (scrollableContent) {
+            scrollableContent.scrollTop = scrollableContent.scrollHeight;
+        } else {
+            console.log('找不到目標元素，Class 為 ClickToAccept__StyledContent-sc-1bm3gjz-3.iZxUpj');
         }
     }
 
     function clickAcceptButton() {
-        const button = document.querySelector("button.sc-AxhUy.fCeRMj.bigtix-button.bigtix-button--primary.ClickToAccept__StyledButton-sc-1bm3gjz-2.jUICtK");
+        const button = document.querySelector('.ClickToAccept__StyledButton-sc-1bm3gjz-2')
         if (button) {
             button.click();
         }
@@ -50,31 +54,32 @@
     }
 
     function clickquan() {
-        const svgElements = document.querySelectorAll("svg.bigtix-button__icon--prefix.bigtix-button__icon--spin._1xa4e236");
-        const button = document.querySelector("button.bigtix-button--primary.bigtix-booking-pagenav-next");
-        if (svgElements.length > 1) {
-            const secondSvgElement = svgElements[1]; // Select the second one
-
-            const clickEvent = new MouseEvent('click', {
-                view: window,
-                bubbles: true,
-                cancelable: true
-            });
-            secondSvgElement.dispatchEvent(clickEvent);
-            secondSvgElement.dispatchEvent(clickEvent);
-            secondSvgElement.dispatchEvent(clickEvent);
-            secondSvgElement.dispatchEvent(clickEvent);
-            secondSvgElement.dispatchEvent(clickEvent);
-            secondSvgElement.dispatchEvent(clickEvent);
-            secondSvgElement.dispatchEvent(clickEvent);
-            secondSvgElement.dispatchEvent(clickEvent);
-            secondSvgElement.dispatchEvent(clickEvent);
-            secondSvgElement.dispatchEvent(clickEvent);
-            button.click();
-            console.log("Clicked the second SVG element.");
+        const svgElements = document.querySelector('[data-test="bigtix-test-quantity-select-add"]');
+        if (svgElements) {
+            setTimeout(clickquan2, 500)
+            setTimeout(clickquan2, 800)
+            setTimeout(clickquan2, 1100)
+            setTimeout(clickquan2, 1300)
+            setTimeout(clickquan2, 1500)
+            setTimeout(clickquan2, 1700)
+            function clickquan2(){
+                const clickEvent = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true
+                });
+                svgElements.dispatchEvent(clickEvent);
+                console.log("Clicked the second SVG element.");
+            }
         } else {
             console.log("Second SVG element not found.");
         }
+
+        function clickbutton1(){
+            const button = document.querySelector('#bigtix-booking-next-page')
+            button.click();
+        }
+        setTimeout(clickbutton1, 3500)
     }
 
 
@@ -99,26 +104,28 @@
 
 
     function clickSection(sectionName) {
-        const section = document.querySelector(`polygon[data-section-name='${sectionName}']`);
+        const section = document.querySelector(`[link="${sectionName}.svg"]`); // 正確！單一 querySelector
+        const section2 = document.querySelector(`polygon[data-section-name='${sectionName}']`);
+        const section3 = document.querySelector(`path[data-section-name='${sectionName}']`);
 
 
         if (section) {
-            simulateMouseEvents(section); // Simulate mouse events on the section
-
-            setTimeout(() => {
-                const confirmButton = document.getElementById("bigtix-booking-next-page"); // Use ID to select the button
-                console.log(confirmButton);
-                if (confirmButton) {
-                    confirmButton.click(); // Click the confirm button
-                    console.log("Clicked the confirm button.");
-                    setTimeout(clickBackButton, 5000)
-                } else {
-                    console.log("Confirm button not found.");
-                }
-            }, 1000); // Adjust timeout as necessary
-        } else {
-            console.log("Section not found.");
-        }
+            simulateMouseEvents(section)}; // Simulate mouse events on the section
+        if (section2) {
+            simulateMouseEvents(section2)}; // Simulate mouse events on the section
+        if (section3) {
+            simulateMouseEvents(section3)}; // Simulate mouse events on the section
+        setTimeout(() => {
+            const confirmButton = document.getElementById("bigtix-booking-next-page"); // Use ID to select the button
+            console.log(confirmButton);
+            if (confirmButton) {
+                confirmButton.click(); // Click the confirm button
+                console.log("Clicked the confirm button.");
+                setTimeout(clickBackButton, 5000)
+            } else {
+                console.log("Confirm button not found.");
+            }
+        }, 1000); // Adjust timeout as necessary
     }
 
     function clickBackButton() {
@@ -142,7 +149,7 @@
         let sectionIndex = 0;
 
         const intervalId = setInterval(() => {
-            const confirmButton = document.getElementById("bigtix-booking-next-page");
+            const confirmButton = document.querySelector('button[data-test="test-bigtix-booking--pagenav-next"][disabled]')
 
             if (confirmButton) {
                 clearInterval(intervalId); // Stop checking if confirm button is found
@@ -161,7 +168,6 @@
 
 
 
-
     function runActions() {
         for (let i = 0; i < 2; i++) { // Run actions twice
             setTimeout(() => clickBookNowButton(), 3000 + (i * 15000)); // 3000, 18000
@@ -171,6 +177,7 @@
             setTimeout(() => clickquan(), 13000 + (i * 15000)); // 13000, 30000
         }
     }
+
 
     runActions()
     processSections()
